@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\User;
-
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -123,14 +123,13 @@ class UserController extends Controller
 
         if($request->has('admin')) {
             if (!$user->isVerified()) {
-                return response()->json(['error' => 'Only verified users can modify the admin field', 'code' => 409]);
-
+                return $this->errorResponse('Only verified users can modify the admin field', 'code' , 409);
             }
             $user->admin = $request->admin;
         }
 
         if (!$user->isDirty()) {
-            return response()->json(['error' => 'You need to spicify a diferent value to update', 'code' => 422], 422);
+            return $this->errorResponse('Only verified users can modify the admin field', 'code' , 422);
         }
 
         $user->save();
