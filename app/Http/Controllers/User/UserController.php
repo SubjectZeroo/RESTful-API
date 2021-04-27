@@ -17,7 +17,7 @@ class UserController extends ApiController
     {
         $users = User::all();
 
-        return response()->json(['data' => $users], 200);
+        return $this->showAll($users);
 
     }
 
@@ -72,9 +72,9 @@ class UserController extends ApiController
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 
     /**
@@ -100,11 +100,9 @@ class UserController extends ApiController
         $user = User::findOrFail($id);
 
         $rules =[
-
             'email' => 'min:6|unique:users,email,'. $user->id,
             'password' => 'min:6|confirmed',
             'admin' => 'in:' . User::ADMIN_USER . ',' . User::REGULAR_USER,
-
         ];
 
         if($request->has('name')) {
@@ -123,18 +121,19 @@ class UserController extends ApiController
 
         if($request->has('admin')) {
             if (!$user->isVerified()) {
-                return $this->errorResponse('Only verified users can modify the admin field', 'code' , 409);
+                return $this->errorResponse('Solo los usuarios verficados  pueden modificar el campo admin', 409);
             }
             $user->admin = $request->admin;
         }
 
         if (!$user->isDirty()) {
-            return $this->errorResponse('Only verified users can modify the admin field', 'code' , 422);
+            return $this->errorResponse('Nesecitas especificar un valor diferente para actualizar' , 422);
         }
 
         $user->save();
 
-        return response()->json(['data' => $user], 200);
+        // return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 
     /**
@@ -149,6 +148,6 @@ class UserController extends ApiController
 
         $user->delete();
 
-        return response()->json(['data' => $user], 200);
+        return $this->showOne($user);
     }
 }
