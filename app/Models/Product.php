@@ -23,6 +23,10 @@ class Product extends Model
         'seller_id'
     ];
 
+    protected $hidden = [
+        'pivot'
+    ];
+
     public function categories()
     {
         return $this->belongsToMany(Category::class);

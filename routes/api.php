@@ -28,7 +28,10 @@ use Illuminate\Support\Facades\Route;
  * Categories
  */
  Route::resource('categories', 'App\Http\Controllers\Category\CategoryController', ['except' => ['create', 'edit']]);
-
+ Route::resource('categories.products', 'App\Http\Controllers\Category\CategoryProductController', ['only' => ['index']]);
+ Route::resource('categories.sellers', 'App\Http\Controllers\Category\CategorySellerController', ['only' => ['index']]);
+ Route::resource('categories.categories', 'App\Http\Controllers\Category\CategoryCategoryController', ['only' => ['index']]);
+ Route::resource('categories.buyers', 'App\Http\Controllers\Category\CategoryBuyerController', ['only' => ['index']]);
 /**
  * Products
  */
