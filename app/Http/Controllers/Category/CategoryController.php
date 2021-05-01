@@ -71,7 +71,7 @@ class CategoryController extends ApiController
         ]));
 
         if ($category->isClean()) {
-            return $this->errorResponse('Nesecitas especififcar un valor diferente para actualizar');
+            return $this->errorResponse('Nesecitas especififcar un valor diferente para actualizar', 422);
         }
 
         $category->save();
