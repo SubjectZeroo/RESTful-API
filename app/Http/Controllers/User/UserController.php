@@ -15,12 +15,12 @@ class UserController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         $users = User::all();
 
         return $this->showAll($users);
-
     }
 
     /**
