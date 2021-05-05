@@ -66,3 +66,4 @@ Route::resource('transactions.sellers', 'App\Http\Controllers\Transaction\Transa
 Route::resource('users', 'App\Http\Controllers\User\UserController', ['except' => ['create', 'edit']]);
 Route::get('users/verify/{token}', 'App\Http\Controllers\User\UserController@verify')->name('verify');
 Route::get('users/{user}/resend', 'App\Http\Controllers\User\UserController@resend')->name('resend');
+Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');

@@ -39,11 +39,13 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
+
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
+
                             @endif
 
                             {{-- @if (Route::has('register'))
@@ -52,6 +54,11 @@
                                 </li>
                             @endif --}}
                         @else
+                            <li>
+                                <a href="{{route('personal-tokens', Auth::user()->id)  }}">
+                                    My tokens
+                                </a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}

@@ -13,8 +13,9 @@ class UserController extends ApiController
 {
     public function __construct()
     {
-        parent::__construct();
-
+        // parent::__construct();
+        $this->middleware('client.credentials')->only(['store', 'resend']);
+        $this->middleware('auth:api')->except(['store', 'verify','resend']);
         $this->middleware('transform.input:' . UserTransfomer::class)->only(['store', 'update']);
     }
 
@@ -69,7 +70,6 @@ class UserController extends ApiController
         $data['admin'] = User::REGULAR_USER;
 
         $user = User::create($data);
-
 
         return response()->json(['data' => $user], 200);
     }

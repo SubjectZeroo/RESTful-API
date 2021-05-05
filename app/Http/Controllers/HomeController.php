@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\FuncCall;
 
 class HomeController extends Controller
 {
@@ -25,4 +26,11 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+
+    public function getTokens()
+    {
+        return view('vendor.passport.authorize');
+    }
+
 }
