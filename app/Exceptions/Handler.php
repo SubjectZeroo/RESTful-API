@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponser;
+use Asm89\Stack\CorsService;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -56,48 +57,57 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+       $response = $this->handleException($request, $exception);
+
+       app(CorsService::class)->addActualRequestHeader($response, $request);
+
+       return $response;
+    }
+
+    public function handleException($request, Exception $exception)
+    {
         if ($exception instanceof  ModelNotFoundException) {
-           $modelName = strtolower(class_basename($exception->getModel()));
-           return $this->errorResponse("No existe ningun {$modelName} con este identificador", 404);
+            $modelName = strtolower(class_basename($exception->getModel()));
+            return $this->errorResponse("No existe ningun {$modelName} con este identificador", 404);
+         }
+
+        if ($exception instanceof AuthenticationException) {
+            return $this->unauthenticated($request,$exception);
         }
 
-       if ($exception instanceof AuthenticationException) {
-           return $this->unauthenticated($request,$exception);
-       }
+        if ($exception instanceof AuthorizationException) {
+            return $this->errorResponse($exception->getMessage(), 403);
+        }
 
-       if ($exception instanceof AuthorizationException) {
-           return $this->errorResponse($exception->getMessage(), 403);
-       }
+        if ($exception instanceof MethodNotAllowedHttpException) {
+             return $this->errorResponse('Este metodo para los request es invalido', 405);
+        }
 
-       if ($exception instanceof MethodNotAllowedHttpException) {
-            return $this->errorResponse('Este metodo para los request es invalido', 405);
-       }
+        if ($exception instanceof HttpException) {
+             return $this->errorResponse($exception->getMessage(), $exception->getMessage());
+        }
 
-       if ($exception instanceof HttpException) {
-            return $this->errorResponse($exception->getMessage(), $exception->getMessage());
-       }
+        if ($exception instanceof NotFoundHttpException) {
+             return $this->errorResponse('Este url no puede ser encontrado', 404);
+        }
 
-       if ($exception instanceof NotFoundHttpException) {
-            return $this->errorResponse('Este url no puede ser encontrado', 404);
-       }
+        if ($exception instanceof  QueryException) {
+            $errorCode = $exception->errorInfo[1];
 
-       if ($exception instanceof  QueryException) {
-           $errorCode = $exception->errorInfo[1];
+            if ($errorCode == 1451) {
+                return $this->errorResponse('No se puede remover este recurso permanentemente. Esta asociado con otro recurso', 409);
+            }
+        }
 
-           if ($errorCode == 1451) {
-               return $this->errorResponse('No se puede remover este recurso permanentemente. Esta asociado con otro recurso', 409);
-           }
-       }
+        if ($exception instanceof TokenMismatchException) {
+             return redirect()->back()->withInput($request->input());
+        }
 
-       if ($exception instanceof TokenMismatchException) {
-            return redirect()->back()->withInput($request->input());
-       }
+        if (config('app.debug')) {
+             return parent::render($request, $exception);
+        }
 
-       if (config('app.debug')) {
-            return parent::render($request, $exception);
-       }
-
-       return $this->errorResponse('Unexpected exception. Try Later', 500);
+        return $this->errorResponse('Unexpected exception. Try Later', 500);
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)
