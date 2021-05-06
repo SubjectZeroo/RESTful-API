@@ -62,7 +62,7 @@ Route::resource('transactions.sellers', 'App\Http\Controllers\Transaction\Transa
  /**
  * User
  */
-
+Route::name('me')->get('users/me','App\Http\Controllers\User\UserController@me');
 Route::resource('users', 'App\Http\Controllers\User\UserController', ['except' => ['create', 'edit']]);
 Route::get('users/verify/{token}', 'App\Http\Controllers\User\UserController@verify')->name('verify');
 Route::get('users/{user}/resend', 'App\Http\Controllers\User\UserController@resend')->name('resend');
