@@ -59,7 +59,7 @@ class Handler extends ExceptionHandler
     {
        $response = $this->handleException($request, $exception);
 
-       app(CorsService::class)->addActualRequestHeader($response, $request);
+       app(CorsService::class)->addActualRequestHeaders($response, $request);
 
        return $response;
     }
