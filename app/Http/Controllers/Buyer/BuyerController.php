@@ -33,7 +33,8 @@ class BuyerController extends ApiController
      */
     public function show(Buyer $buyer)
     {
-        return response()->json(['data' => $buyer], 200);
+        // return response()->json(['data' => $buyer], 200);
+        return $this->showOne($buyer);
     }
 
 
